@@ -1,6 +1,17 @@
 package problem04;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -40,12 +51,61 @@ public class Main {
 		Scanner sc = new Scanner(System.in);
 		int correct = 0;
 		int wrong = 0;
+		int second = 0;
 		for(int i=0; i<random.length; i++) {
-			System.out.println((i+1) + ".  " + a[i] + "x" + b[i] + " ?");
+			System.out.println((i+1) + ".  " + a[random[i] - 1] + "x" + b[random[i] - 1] + " ?");
+			
 			long start = System.currentTimeMillis();
-			if(sc.nextInt() == a[i]*b[i]) correct++;
-			else wrong++;
+			int answer = sc.nextInt();
 			long end = System.currentTimeMillis();
+			int sec = (int) ((end-start)/1000.0);
+			
+			if(answer == a[random[i] - 1]*b[random[i] - 1]) {
+				System.out.println(".  " + sec + " .");
+				correct++;
+			}
+			else {
+				System.out.println(".  " + answer + ".  " + sec + " .");
+				wrong++;
+			}
+			
+			second += sec;
 		}
+		
+		File file = new File("score.txt");
+		try {
+			FileWriter fw = new FileWriter(file, true) ;
+			fw.write(correct + "\t" + wrong + "\t" + second);
+            fw.flush();
+            
+            fw.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		Path path = Paths.get("score.txt");
+        Charset cs = StandardCharsets.UTF_8;
+        List<String> list = new ArrayList<String>();
+        try{
+            list = Files.readAllLines(path, cs);
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+        
+        ArrayList<Integer> cor = new ArrayList<>();
+        ArrayList<Integer> wrn = new ArrayList<>();
+        ArrayList<Integer> se = new ArrayList<>();
+        
+        Collections.sort(list);
+        
+        int ranking = 1;
+        for(String readLine : list){
+        	String[] arr = readLine.split("\t");
+        	System.out.println(ranking + " : " + Integer.parseInt(arr[0]) + " / : " + Integer.parseInt(arr[2]));
+        	ranking++;
+        }
+        
+        
 	}
 }
